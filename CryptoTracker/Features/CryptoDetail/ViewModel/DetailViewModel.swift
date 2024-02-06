@@ -7,27 +7,31 @@
 
 import Foundation
 
-class CryptoViewModel : ObservableObject {
+@MainActor
+class DetailViewModel : ObservableObject {
     let webService = CMCService()
-    @Published var cryptoData : CryptoData?
+    @Published var coinData : CoinData?
     @Published var cryptoError : CryptoError?
     @Published var loading : Bool = true
     
-
-    
-    func downloadCryptos() {
-        loading.self = true
-        webService.getCryptoCurrencies() { result in
+    func getCryptoDetail(id : Int) {
+        self.loading = true
+        webService.getCryptoDetail(id: id, completion: { result in
+            DispatchQueue.main.async {
             switch result {
                 case .failure(let error):
-                self.cryptoError = error
-                case .success(let cryptoData):
-                DispatchQueue.main.async {
-                    self.cryptoData = cryptoData
-                }
+                    DispatchQueue.main.async {
+                        self.cryptoError = error
+                    }
+                case .success(let coinData):
+                    DispatchQueue.main.async {
+                        self.coinData = coinData
+                    }
             }
-            self.loading = false
-        }
-        
+            }
+            DispatchQueue.main.async {
+                self.loading = false
+            }
+        })
     }
 }

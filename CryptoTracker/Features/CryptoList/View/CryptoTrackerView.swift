@@ -17,13 +17,33 @@ struct CryptoTrackerView: View {
     
     var body: some View {
         NavigationView {
-
-            List(cryptoViewModel.cryptoData?.data ?? [], id: \.id ) {crypto in VStack {
-                    Text(crypto.name)
+            VStack {
+                if cryptoViewModel.loading {
+                    ProgressView("Loading")
                 }
-                
-            }
-        }.onAppear {
+                else {
+                    if let _ = cryptoViewModel.cryptoError {
+                        Text("Exception")
+                        Button(action: {
+                            cryptoViewModel.downloadCryptos()
+                        }, label: {
+                            Text("Refresh")
+                        }).padding()
+                    }
+                    else {
+                        List(cryptoViewModel.cryptoData?.data ?? [], id: \.id ) {crypto in  NavigationLink(destination: DetailView(cryptoId: crypto.id, cryptoSymbol: crypto.symbol)) {
+                            VStack(alignment: .leading)  {
+                                Text(crypto.name).bold().font(.title2)
+                                Text(crypto.symbol)
+                            }
+                        }
+                        }
+                    }
+                }
+               
+                }.navigationBarTitle("Crypto Tracker", displayMode: .inline)
+        }
+        .onAppear {
             cryptoViewModel.downloadCryptos()
         }
     }

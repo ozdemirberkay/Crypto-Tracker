@@ -6,54 +6,67 @@
 //
 
 import Foundation
-
 struct CoinData: Codable {
- 
-    struct CoinDetail: Codable {
-        let id: Int
-        let name: String
-        let symbol: String
-        let slug: String
-        let numMarketPairs: Int
-        let dateAdded: String
-        let tags: [String]
-        let maxSupply: Double?
-        let circulatingSupply: Double
-        let totalSupply: Double
-        let isActive: Int
-        let infiniteSupply: Bool
-        let platform: String?
-        let cmcRank: Int
-        let isFiat: Int
-        let selfReportedCirculatingSupply: Double?
-        let selfReportedMarketCap: Double?
-        let tvlRatio: Double?
-        let lastUpdated: String
-        
-        struct Quote: Codable {
-            struct USD: Codable {
-                let price: Double
-                let volume24h: Double
-                let volumeChange24h: Double
-                let percentChange1h: Double
-                let percentChange24h: Double
-                let percentChange7d: Double
-                let percentChange30d: Double
-                let percentChange60d: Double
-                let percentChange90d: Double
-                let marketCap: Double
-                let marketCapDominance: Double
-                let fullyDilutedMarketCap: Double
-                let tvl: Double?
-                let lastUpdated: String
-            }
-            
-            let USD: USD
-        }
-        
-        let quote: Quote
-    }
-    
     let status: Status
     let data: [String: CoinDetail]
+}
+
+struct CoinDetail: Codable {
+    let id: Int
+    let name, symbol, slug: String
+    let numMarketPairs: Int
+    let dateAdded: String
+    let tags: [String]
+    let circulatingSupply, totalSupply: Double
+    let isActive: Int
+    let infiniteSupply: Bool
+    let cmcRank, isFiat: Int
+    let lastUpdated: String
+    let quote: Quote
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, symbol, slug
+        case numMarketPairs = "num_market_pairs"
+        case dateAdded = "date_added"
+        case tags
+        case circulatingSupply = "circulating_supply"
+        case totalSupply = "total_supply"
+        case isActive = "is_active"
+        case infiniteSupply = "infinite_supply"
+        case cmcRank = "cmc_rank"
+        case isFiat = "is_fiat"
+        case lastUpdated = "last_updated"
+        case quote
+    }
+}
+
+struct Quote: Codable {
+    let usd: Usd
+
+    enum CodingKeys: String, CodingKey {
+        case usd = "USD"
+    }
+}
+
+struct Usd: Codable {
+    let price, volume24H, volumeChange24H, percentChange1H: Double
+    let percentChange24H, percentChange7D, percentChange30D, percentChange60D: Double
+    let percentChange90D, marketCap, marketCapDominance, fullyDilutedMarketCap: Double
+    let lastUpdated: String
+
+    enum CodingKeys: String, CodingKey {
+        case price
+        case volume24H = "volume_24h"
+        case volumeChange24H = "volume_change_24h"
+        case percentChange1H = "percent_change_1h"
+        case percentChange24H = "percent_change_24h"
+        case percentChange7D = "percent_change_7d"
+        case percentChange30D = "percent_change_30d"
+        case percentChange60D = "percent_change_60d"
+        case percentChange90D = "percent_change_90d"
+        case marketCap = "market_cap"
+        case marketCapDominance = "market_cap_dominance"
+        case fullyDilutedMarketCap = "fully_diluted_market_cap"
+        case lastUpdated = "last_updated"
+    }
 }
